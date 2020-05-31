@@ -1,0 +1,2 @@
+rootProject.name='data5'
+include ':app'
