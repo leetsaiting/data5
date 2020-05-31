@@ -26,8 +26,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static ListView lv_json;
-    String url = "http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=a880adf3-d574-430a-8e29-3192a41897a5";
+    public ListView lv_json;
+    String url = "https://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=74cfc01d-242f-428d-bc2f-caf5edd6e404";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         JSONArray data = jsonObject.getJSONObject("result").getJSONArray("results");
         for(int i = 0 ; i < data.length(); i++){
             JSONObject o = data.getJSONObject(i);
-            String str = "id:" + o.getString("id") + "\n" +
+            String str = "id:" + o.getString("_id") + "\n" +
                     "項次:" + o.getString("項次") + "\n" +
                     "停車場名稱:" + o.getString("停車場名稱") + "\n" +
                     "經度(WGS84):" + o.getString("經度(WGS84)") + "\n" +
