@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     public ListView lv_json;
-    String url = "https://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=74cfc01d-242f-428d-bc2f-caf5edd6e404";
+    String url = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-0590E3E1-D81C-4BB7-8D12-19FE159CECCD&locationName=%E8%8A%B1%E8%93%AE%E7%B8%A3";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,16 +68,57 @@ public class MainActivity extends AppCompatActivity {
 
     protected void parseJSON(JSONObject jsonObject) throws JSONException{
         ArrayList<String>list = new ArrayList();
-        JSONArray data = jsonObject.getJSONObject("result").getJSONArray("results");
+        //for(int j = 0 ; j < limit; j++)
+        JSONArray data = jsonObject.getJSONObject("records").getJSONArray("location");
+        String str_loc = "location:" + data.getJSONObject(0).getString("locationName");
+        list.add(str_loc);
         for(int i = 0 ; i < data.length(); i++){
-            JSONObject o = data.getJSONObject(i);
-            String str = "id:" + o.getString("_id") + "\n" +
-                    "項次:" + o.getString("項次") + "\n" +
-                    "停車場名稱:" + o.getString("停車場名稱") + "\n" +
-                    "經度(WGS84):" + o.getString("經度(WGS84)") + "\n" +
-                    "緯度(WGS84):" + o.getString("緯度(WGS84)");
-            list.add(str);
+            JSONObject o = data.getJSONObject(i).getJSONArray("weatherElement").getJSONObject(0);
+            JSONObject o2 = o.getJSONArray("time").getJSONObject(0);
+            //String str = "elementName:" + o2.getString("elementName");
+            //String str = "startTime:" + o2.getString("startTime") + "\n";
+            /*JSONObject data_Wx = o2.getJSONObject("parameter");
+            JSONObject data_PoP = data.getJSONObject(i).getJSONArray("weatherElement").getJSONObject(1).getJSONArray("time").getJSONObject(0).getJSONObject("parameter");
+            JSONObject data_MinT = data.getJSONObject(i).getJSONArray("weatherElement").getJSONObject(2).getJSONArray("time").getJSONObject(0).getJSONObject("parameter");*/
+            String str_tim = "startTime:" + o2.getString("startTime") + "\n" +
+                    "endTime:" + o2.getString("endTime") + "\n"
+                    /* + "現在溫度:" + data_MinT.getString("parameterName") + "°C" + "\n" +
+                    "天氣狀況:" + data_Wx.getString("parameterName") + "\n" +
+                    "降雨機率:" + data_PoP.getString("parameterName") + "%"*/;
+            //list.add(str);
+
+            String str_MinT = null;
+            String str_Wx = null;
+            String str_PoP = null;
+            for (int j = 0 ; j < o2.length(); j++){
+                JSONObject o3 = data.getJSONObject(i).getJSONArray("weatherElement").getJSONObject(j).getJSONArray("time").getJSONObject(0).getJSONObject("parameter");
+
+                if(j == 2)str_MinT = "現在溫度:" + o3.getString("parameterName") + "°C" + "\n" ;
+                if(j == 0)str_Wx = "天氣狀況:" + o3.getString("parameterName") + "\n" ;
+                if(j == 1)str_PoP ="降雨機率:" + o3.getString("parameterName") + "%";
+
+            }
+
+            String str2 = str_tim + str_MinT + str_Wx + str_PoP ;
+            list.add(str2);
+
+            //JSONObject data2 = o.getJSONArray("weatherElement")
+            //JSONObject o = data.getJSONObject(i).getJSONArray("weatherElement");
+            //JSONObject o2 = o.getJSONArray("time");
+                    /*for(int j = 0 ; j < o2.length(); j++){
+                        JSONObject o3 = o.getJSONObject(j);
+                        //JSONObject o3 = o.getJSONObject(j).getJSONArray("time").getJSONObject(0);
+                        //String str = "elementName:" + o2.getString("elementName");
+                        String str = "startTime:" + o3.getString("startTime") + "\n";
+                        list.add(str);
+                    }*/
         }
+        /*JSONArray data_2 = jsonObject.getJSONObject("records").getJSONArray("location");
+        for(int i = 0 ; i < data_2.length(); i++){
+            JSONObject o = data_2.getJSONObject(i);
+            String str = "locationName:" + o.getString("locationName");
+            list.add(str);
+        }*/
         lv_json.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, list));
     }
 
